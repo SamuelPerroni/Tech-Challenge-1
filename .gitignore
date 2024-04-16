@@ -1,0 +1,9 @@
+*.csv
+*.xlsx
+venv/
+**/__pycache__
+.vscode
+.idea
+.env
+*.db
+.pytest_cache

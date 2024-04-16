@@ -1,0 +1,1 @@
+from data.Processamento.pipeline import processamento_pipeline
