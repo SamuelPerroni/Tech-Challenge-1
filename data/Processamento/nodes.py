@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+
 def read_from_csv(path: str) -> pd.DataFrame:
     """
     Function to read the .csv file from embrapa commerce values.
@@ -17,7 +18,8 @@ def read_from_csv(path: str) -> pd.DataFrame:
                        header=0,
                        names=name_list,
                        on_bad_lines='skip')
-    
+
+
 def product_type(name: str) -> str:
     """
     Function to define product type
@@ -36,6 +38,7 @@ def product_type(name: str) -> str:
     else:
         return ''
 
+
 def new_col_type(data: pd.DataFrame) -> pd.DataFrame:
     """
     Function to create a new column called 'type'
@@ -50,6 +53,7 @@ def new_col_type(data: pd.DataFrame) -> pd.DataFrame:
     data.insert(loc=0, column='product_type', value=new_column)
     return data
 
+
 def drop_totals(data: pd.DataFrame) -> pd.DataFrame:
     """
     Function to drop aggregation lines
@@ -63,6 +67,7 @@ def drop_totals(data: pd.DataFrame) -> pd.DataFrame:
     data = data[data['product_type'] != '']
     return data
 
+
 def unpivot_years_columns(data: pd.DataFrame) -> pd.DataFrame:
     """
     Unpivot all year column into only one column named year.
@@ -75,12 +80,13 @@ def unpivot_years_columns(data: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: Pandas DataFrame with melted year columns.
     """
     return pd.melt(data,
-                   id_vars=['product_type','produto', 'full_product_name'],
+                   id_vars=['product_type', 'produto', 'full_product_name'],
                    value_vars=None,
                    var_name='year',
                    value_name='commerce')
 
-def remove_notNumbers(data: pd.DataFrame) -> pd.DataFrame:
+
+def remove_not_numbers(data: pd.DataFrame) -> pd.DataFrame:
     """
     Function to change not number values to NaN
 
