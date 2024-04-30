@@ -9,6 +9,7 @@ def importacao_pipeline(paths: List[str]) -> List[DataFrame]:
         df = nodes.read_from_csv(path=path)
         df = nodes.sum_collumns_same_year(df)
         df = nodes.unpivot_years_columns(df)
+        df = nodes.remove_rows_without_commerce_value(df)
         df = df.drop('Id', axis=1)
         df_list.append(df)
         

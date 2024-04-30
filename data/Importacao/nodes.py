@@ -10,7 +10,7 @@ def read_from_csv(path: str) -> DataFrame:
         path (str): string path of file (can be an url as well).
 
     Returnes:
-        pd.DataFrame: A pandas dataframe of embrapa commerce values.
+        DataFrame: A pandas dataframe of embrapa commerce values.
     """
     return pd.read_csv(
         path,
@@ -25,10 +25,10 @@ def unpivot_years_columns(data: DataFrame) -> DataFrame:
     Also known as melt transformation.
 
     Args:
-        data (pd.DataFrame): DataFrame with all column names from 1970 to 2022.
+        data (DataFrame): DataFrame with all column names from 1970 to 2022.
 
     Returns:
-        pd.DataFrame: Pandas DataFrame with melted year columns.
+        DataFrame: A pandas DataFrame with melted year columns.
     """
     return pd.melt(
         data,
@@ -41,13 +41,13 @@ def unpivot_years_columns(data: DataFrame) -> DataFrame:
 
 def sum_collumns_same_year(data: DataFrame) -> DataFrame:
     """
-    Sums the values ​​of the dataframe columns that have the same year.
+    Sums the values of the dataframe columns that have the same year.
 
     Args:
-        data (pd.DataFrame): DataFrame with columns for years from 1970 to 2022.
+        data (DataFrame): DataFrame with columns for years from 1970 to 2022.
 
     Returns:
-        pd.DataFrame: DataFrame with the year columns added together.
+        DataFrame: A pandas DataFrame with the year columns added together.
     """
     df = data
     years = list(range(1970, 2023, 1))
@@ -58,3 +58,17 @@ def sum_collumns_same_year(data: DataFrame) -> DataFrame:
         df = df.drop(f'{string_year}.1', axis=1)
         
     return df
+
+def remove_rows_without_commerce_value(data: DataFrame) -> DataFrame:
+    """
+    Remove rows from the dataframe that have no trade value.
+
+    Args:
+        data (DataFrame): DataFrame with trading columns.
+
+    Returns:
+        DataFrame: A pandas DataFrame without rows with no import value.
+    """
+    filter = data['commerce'] > 0
+  
+    return data[filter]
