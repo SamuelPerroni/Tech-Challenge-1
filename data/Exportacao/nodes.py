@@ -43,7 +43,6 @@ def process_export_data(data: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(processed_data)
 
 
-
 # Escolha o caminho para o arquivo CSV
 
 """caminho_arquivo = "ExpVinho.csv"
