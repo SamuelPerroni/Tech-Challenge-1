@@ -14,7 +14,3 @@ class ComercioOut(ComercioIn):
 
 class ComercioUpdate(ComercioIn):
     pass
-
-
-class ComercioDelete(ComercioIn):
-    pass

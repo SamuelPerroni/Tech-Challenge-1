@@ -44,6 +44,13 @@ class Comercio(Base):
         return result.scalars().all()
     
     @classmethod
+    async def get_by_id(cls, session, id):
+        query = select(cls).where(cls.id == id)
+        result = await session.execute(query)
+        comercio_obj = result.scalar()
+        return comercio_obj
+    
+    @classmethod
     async def create(cls, session, obj_to_create):
         session.add(obj_to_create)
         await session.commit()

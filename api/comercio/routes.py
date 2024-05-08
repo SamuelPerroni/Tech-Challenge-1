@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, HTTPException, status, Path, Query
 from sqlalchemy.future import select
 
-from .schemas import ComercioIn, ComercioOut, ComercioUpdate, ComercioDelete
+from .schemas import ComercioIn, ComercioOut, ComercioUpdate
 from .models import Comercio
 from ..database import SessionLocal
 
@@ -20,9 +20,7 @@ async def create_comercio(comercio_create: ComercioIn):
         comercio_obj = await Comercio.get(session, **comercio_create.model_dump())
         if comercio_obj is None:
             comercio_to_create = Comercio(**comercio_create.model_dump())
-            session.add(comercio_to_create)
-            await session.commit()
-            return comercio_to_create
+            return await Comercio.create(session, comercio_to_create)
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Object already exists")
 
 
@@ -33,16 +31,7 @@ async def read_comercio(
     product: Annotated[str | None,  Query(description="Query data for specific product")] = None,  
     description_type: Annotated[str | None, Query(description="Query for scpecific type of product")] = None):
     async with SessionLocal() as session:
-        query = select(Comercio)
-        if year is not None:
-            query = query.where(Comercio.year == year)
-        if product is not None:
-            query = query.where(Comercio.product == product)
-        if description_type is not None:
-            query = query.where(Comercio.description_type == description_type)     
-        result = await session.execute(query)
-        comercio_objs = result.scalars().all()
-    
+        comercio_objs = await Comercio.get_all(session, year=year, product=product, description_type=description_type)
     return comercio_objs
 
 
@@ -62,15 +51,10 @@ async def read_comercio_by_id(id: Annotated[int, Path(title="The ID of the item 
 @comercio_router.put("/{id}", response_model=ComercioOut, status_code=status.HTTP_200_OK)
 async def update_comercio_object(id: Annotated[int, Path(title="The ID of the item to get")], comercio_update: ComercioUpdate):
     async with SessionLocal() as session:
-        # Check if object exists
-        query = select(Comercio).where(Comercio.id == id)
-        result = await session.execute(query)
-        comercio_obj = result.scalar()
+        comercio_obj = await Comercio.get_by_id(session, id=id)
         if comercio_obj is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Object not found")
-        for field, value in comercio_update.model_dump(exclude_unset=True).items():
-            setattr(comercio_obj, field, value)
-        await session.commit()
+        await Comercio.update(session, comercio_obj, **comercio_update.model_dump())
     return comercio_obj
 
 
@@ -78,15 +62,10 @@ async def update_comercio_object(id: Annotated[int, Path(title="The ID of the it
 @comercio_router.delete('/{id}', status_code=status.HTTP_200_OK)
 async def delete_comercio_object(id: Annotated[int, Path(title="The ID of the item to get")]):
     async with SessionLocal() as session:
-        # Check if object exists
-        query = select(Comercio).where(Comercio.id == id)
-        result = await session.execute(query)
-        comercio_obj = result.scalar()
+        comercio_obj = await Comercio.get_by_id(session, id=id)
         if comercio_obj is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Object not found")
-        await session.delete(comercio_obj)
-        await session.commit()
-
+        await Comercio.delete(session, comercio_obj)
     return {"message": "deleted"} 
 
 # # # # COMPLEX ENDPOINTS # # # #
