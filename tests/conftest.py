@@ -25,16 +25,11 @@ class ComercioFactory:
     
     @classmethod
     def build(cls):
-        product = cls.generate_product()
-        year = cls.generate_year()
-        commerce = cls.generate_commerce()
-        description_type = cls.generate_description_type()
-
         return ComercioIn(
-            product=product,
-            year=year,
-            commerce=commerce,
-            description_type=description_type
+            product=Faker().pystr(min_chars=3, max_chars=16),
+            year=int(Faker().year()),
+            commerce=Faker().pyfloat(left_digits=4, positive=True, right_digits=2),
+            description_type=Faker().pystr(min_chars=3, max_chars=16)
         )
 
 
