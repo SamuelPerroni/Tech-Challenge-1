@@ -74,3 +74,10 @@ def rewrite_type_names(data: pd.DataFrame) -> pd.DataFrame:
 
 def drop_rows_totals(data):
     return data.dropna(subset='produto')
+
+
+def select_columns(data):
+    return data.loc[:, ['full_product_name', 'year', 'commerce', 'description type']].rename(
+        columns={'full_product_name': 'product',
+                 'description type': 'description_type'}
+    )
