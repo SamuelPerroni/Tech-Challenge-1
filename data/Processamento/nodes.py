@@ -128,3 +128,17 @@ def new_col_class(data: pd.DataFrame, classification: int) -> pd.DataFrame:
 
     data['classification'] = new_col
     return (data)
+
+
+def remove_duplicated_column(data: pd.DataFrame) -> pd.DataFrame:
+    """
+    Function to drop duplicate column.
+
+    Args:
+        data (DataFrame): Dataframe that we want change not numbers values
+
+    Returnes:
+        pd.DataFrame: Dataframe after the changes
+    """
+    return data.drop(columns=['produto'])
+    

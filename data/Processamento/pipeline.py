@@ -13,6 +13,7 @@ def processamento_pipeline(urls: list[str]) -> pd.DataFrame:
         df = nodes.drop_totals(df)
         df = nodes.unpivot_years_columns(df)
         df = nodes.remove_not_numbers(df)
+        df = nodes.remove_duplicated_column(df)
         dfs.append(df)
         cont += 1
 
