@@ -6,8 +6,6 @@ from const import processamento_urls
 
 if __name__ == '__main__':
 
-    print(comercio_pipeline(comercio_url).info())
-
-    for x in processamento_urls:
-        print(processamento_pipeline(x).info())
-    
+    data = processamento_pipeline(processamento_urls).head(2)
+    print(data.to_dict('records'))
+    print(data.info())

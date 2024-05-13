@@ -80,7 +80,10 @@ def unpivot_years_columns(data: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: Pandas DataFrame with melted year columns.
     """
     return pd.melt(data,
-                   id_vars=['product_type', 'produto', 'full_product_name'],
+                   id_vars=['product_type',
+                            'produto',
+                            'full_product_name',
+                            'classification'],
                    value_vars=None,
                    var_name='year',
                    value_name='commerce')
@@ -88,7 +91,7 @@ def unpivot_years_columns(data: pd.DataFrame) -> pd.DataFrame:
 
 def remove_not_numbers(data: pd.DataFrame) -> pd.DataFrame:
     """
-    Function to change not number values to NaN
+    Function to drop not number values
 
     Args:
         data (DataFrame): Dataframe that we want change not numbers values
@@ -97,4 +100,31 @@ def remove_not_numbers(data: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: Dataframe after the changes
     """
 
-    return data.map(lambda x: np.nan if (x == '*' or x == 'nd') else x)
+    indexs = data[data['commerce'].isin(["*", "nd"])].index
+    return data.drop(indexs)
+
+
+def new_col_class(data: pd.DataFrame, classification: int) -> pd.DataFrame:
+    """
+    Function to create a new column called 'classification'
+
+    Args:
+        data (DataFrame): Dataframe that we want append a new column
+
+    Returnes:
+        pd.DataFrame: Dataframe after appending new column
+    """
+
+    new_col = ''
+
+    if classification == 0:
+        new_col = 'viniferas'
+    elif classification == 1:
+        new_col = 'americanas_hibridas'
+    elif classification == 2:
+        new_col = 'uvas_mesa'
+    else:
+        new_col = 'sem_classificacao'
+
+    data['classification'] = new_col
+    return (data)
