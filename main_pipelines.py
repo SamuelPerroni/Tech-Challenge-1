@@ -16,4 +16,6 @@ if __name__ == '__main__':
     data = processamento_pipeline(processamento_urls).head(2)
     print(data.to_dict('records'))
     print(data.info())
-    
+
+    data2 = comercio_pipeline(comercio_url)
+    print(data2.info())
