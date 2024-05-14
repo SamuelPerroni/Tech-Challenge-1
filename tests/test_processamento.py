@@ -2,11 +2,6 @@ from api import engine
 import pytest
 
 
-
-
-
-
-
 def get_table_names(conn):
     from sqlalchemy.inspection import inspect
 
