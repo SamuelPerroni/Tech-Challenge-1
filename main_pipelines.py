@@ -17,5 +17,5 @@ if __name__ == '__main__':
     print(data.to_dict('records'))
     print(data.info())
 
-    print(comercio_pipeline(comercio_url).info())
+    print(comercio_pipeline(comercio_url).head(5))
 

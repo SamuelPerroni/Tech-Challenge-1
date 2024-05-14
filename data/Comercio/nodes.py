@@ -16,7 +16,7 @@ def read_from_csv(path: str) -> pd.DataFrame:
                        on_bad_lines='skip').rename(columns={
                            'control': 'produto',
                            'Produto': 'full_product_name'
-                       })
+                       }).drop(['id'],axis=1)
 
 
 def unpivot_years_columns(data: pd.DataFrame) -> pd.DataFrame:
