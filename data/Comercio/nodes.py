@@ -11,12 +11,12 @@ def read_from_csv(path: str) -> pd.DataFrame:
     Returnes:
         pd.DataFrame: A pandas dataframe of embrapa commerce values.
     """
-    name_list = ['produto', 'full_product_name'] + list(range(1970, 2023, 1))
     return pd.read_csv(path,
                        delimiter=';',
-                       header=None,
-                       names=name_list,
-                       on_bad_lines='skip')
+                       on_bad_lines='skip').rename(columns={
+                           'control': 'produto',
+                           'Produto': 'full_product_name'
+                       })
 
 
 def unpivot_years_columns(data: pd.DataFrame) -> pd.DataFrame:

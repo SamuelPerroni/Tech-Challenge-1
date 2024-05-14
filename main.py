@@ -9,7 +9,6 @@ from api.importacao.routes import importacao_router
 from api.processamento.routes import processamento_router
 from api.producao.routes import producao_router
 
-from api.database import Base
 
 app = FastAPI()
 
@@ -40,7 +39,4 @@ app.add_event_handler("startup", startup_database_event)
 
 if __name__ == '__main__':
     uvicorn.run("main:app", reload=True)
-    
-    
 
-    
