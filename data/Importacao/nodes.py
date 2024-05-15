@@ -35,7 +35,7 @@ def unpivot_years_columns(data: DataFrame) -> DataFrame:
         id_vars=['Id', 'País'],
         value_vars=None,
         var_name='year',
-        value_name='commerce'
+        value_name='values'
         )
 
 
@@ -59,7 +59,7 @@ def sum_collumns_same_year(data: DataFrame) -> DataFrame:
         
     return df
 
-def remove_rows_without_commerce_value(data: DataFrame) -> DataFrame:
+def remove_rows_without_import_value(data: DataFrame) -> DataFrame:
     """
     Remove rows from the dataframe that have no trade value.
 
@@ -69,6 +69,6 @@ def remove_rows_without_commerce_value(data: DataFrame) -> DataFrame:
     Returns:
         DataFrame: A pandas DataFrame without rows with no import value.
     """
-    filter = data['commerce'] > 0
+    filter = data['values'] > 0
   
     return data[filter]
