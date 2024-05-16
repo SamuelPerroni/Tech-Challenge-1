@@ -1,58 +1,74 @@
 import pandas as pd
+import numpy as np
+from pandas import DataFrame
 
 
-def read_from_csv(path: str) -> pd.DataFrame:
+def read_from_csv(path: str) -> DataFrame:
     """
-    Função para ler o arquivo CSV com os dados de exportação.
+    Function to read the .csv file from embrapa commerce values.
 
     Args:
-        path (str): Caminho para o arquivo CSV.
+        path (str): string path of file (can be an url as well).
+
+    Returnes:
+        DataFrame: A pandas dataframe of embrapa commerce values.
+    """
+    return pd.read_csv(
+        path,
+        delimiter=';',
+        on_bad_lines='skip'
+        )
+
+
+def unpivot_years_columns(data: DataFrame) -> DataFrame:
+    """
+    Unpivot all year column into only one column named year.
+    Also known as melt transformation.
+
+    Args:
+        data (DataFrame): DataFrame with all column names from 1970 to 2022.
 
     Returns:
-        pd.DataFrame: DataFrame pandas com os dados de exportação.
+        DataFrame: A pandas DataFrame with melted year columns.
     """
-    # Lendo o arquivo CSV com o formato fornecido
-    df = pd.read_csv(path, delimiter=';', encoding='utf-8')
+    return pd.melt(
+        data,
+        id_vars=['Id', 'País'],
+        value_vars=None,
+        var_name='year',
+        value_name='values'
+        )
+
+
+def sum_collumns_with_same_year(data: DataFrame) -> DataFrame:
+    """
+    Sums the values of the dataframe columns that have the same year.
+
+    Args:
+        data (DataFrame): DataFrame with columns for years from 1970 to 2022.
+
+    Returns:
+        DataFrame: A pandas DataFrame with the year columns added together.
+    """
+    df = data
+    df['quantity'] = np.where(df['year'].str.contains('.1'), df['values'], 1)
+    df['valor R$'] = np.where(~df['year'].str.contains('.1'), df['values'], 0)
+    df['year'] = df['year'].str.replace('.1', '')
+    df.groupby(['País',  'year']).agg({'quantity': 'sum', 'valor R$': 'sum'})
+
 
     return df
 
-
-def process_export_data(data: pd.DataFrame) -> pd.DataFrame:
+def remove_rows_without_import_value(data: DataFrame) -> DataFrame:
     """
-    Processa os dados de exportação para obter o formato desejado.
+    Remove rows from the dataframe that have no trade value.
 
     Args:
-        data (pd.DataFrame): DataFrame com os dados de exportação.
+        data (DataFrame): DataFrame with trading columns.
 
     Returns:
-        pd.DataFrame: DataFrame pandas com os dados processados.
+        DataFrame: A pandas DataFrame without rows with no import value.
     """
-    processed_data = []
-    for _, row in data.iterrows():
-        id_value = row.get('Id')
-        country = row.get('País')
-        row_data = {'Id': id_value, 'País': country}
-        for i in range(2, len(row), 2):  # Começa na col 3 e increme 2 em 2
-            year = row.index[i].split('-')[0]  # Obtém o ano da coluna
-            quantity = row.iloc[i]  # Obtém a quantidade usando iloc
-            value = row.iloc[i + 1]  # Obtém o valor usando iloc
-            row_data[f"{year}-Quantidade"] = quantity
-            row_data[f"{year}-Valor"] = value
-        processed_data.append(row_data)
-
-    return pd.DataFrame(processed_data)
-
-
-# Escolha o caminho para o arquivo CSV
-
-"""caminho_arquivo = "ExpVinho.csv"
-
-# Ler os dados do arquivo CSV  ExpEspumantes.csv | ExpUva.csv | ExpSuco.csv
-dados_exportacao = read_from_csv('ExpVinho.csv')
-
-# Processar os dados
-dados_processados = process_export_data(dados_exportacao)
-
-# Exibir os dados processados
-print(dados_processados)
-"""
+    filter = data['values'] > 0
+    
+    return data[filter]
