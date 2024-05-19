@@ -86,7 +86,7 @@ def remove_rows_without_import_value(data: DataFrame) -> DataFrame:
         print("unpivot_years_columns passed!")
     else:
         print("unpivot_years_columns failed!")
-    # Teste para sum_columns_with_same_year
+    #Teste para sum_columns_with_same_year
     summed_df = sum_columns_with_same_year(melted_df)
     print("\nsum_columns_with_same_year result:")
     print(summed_df)
