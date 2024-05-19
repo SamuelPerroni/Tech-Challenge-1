@@ -6,8 +6,8 @@ class ExportacaoIn(BaseModel):
     year: int
     pais: str
     description_type: str
-    value: float
-
+    quantity: int
+    valor: float
 
 class ExportacaoOut(ExportacaoIn):
     id: int
