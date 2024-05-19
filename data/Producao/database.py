@@ -4,7 +4,6 @@ from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-#SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
 SQLALCHEMY_DATABASE_URL = "postgresql://postgres:changeme@localhost/dbml1"
 
 engine = create_engine(
@@ -15,11 +14,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 class Produto(Base):
-    __tablename__ = "produtos"
+    __tablename__ = "producao"
 
     id = Column(Integer, primary_key=True, index=True)
-    product_type = Column(String)
-    product = Column(String)
+    produto_type = Column(String)
+    produto = Column(String)
     year = Column(Integer)
-    valor = Column(Float)
+    production = Column(Float)
 
