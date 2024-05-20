@@ -20,27 +20,55 @@ connection: psycopg2.extensions.connection
 def read_root():
     return {"Hello": "ML1"}
 
+@app.post("/products")
+def create_produto(produto: Produto):
+    session = Session(database.engine)
+    session.add(produto)
+    session.commit()
+    return produto
 
-@app.get("/producao")
+@app.get("/products/{product_id}")
+def read_produto(produto_id: int):
+    session = Session(database.engine)
+    record = session.query(Produto).filter(database.Product.id == produto_id).first()
+    return record
+
+@app.get("/production")
 def read_all():
     session = Session(database.engine)
     records = session.query(Produto).all()
     return records
 
 
-@app.get("/produtos/master/{produto_master}")
-def read_producao_by_master(produto_master):
+@app.get("/produtos/type/{produto_type}")
+def read_producao_by_master(produto_type):
     session = Session(database.engine)
-    records = session.query(database.Produto).filter(database.Produto.produto_master == produto_master).all()
+    records = session.query(database.Produto).filter(database.Produto.produto_type == produto_type).all()
     return records
 
-@app.get("/produtos/master2/{produto_master}")
-def read_produtos_by_master2(produto_master):
+@app.get("/produtos/master2/{produto_type}")
+def read_produtos_by_master2(produto_type):
     session = Session(database.engine)
-    records = session.query(database.Produto).filter(database.Produto.produto_master == produto_master).all()
+    records = session.query(database.Produto).filter(database.Produto.produto_type == produto_type).all()
     for record in records:
         print(record)
     return records
+
+@app.detete("/produtos/{produto_id}")
+def delete_produto(produto_id: int):
+    session = Session(database.engine)
+    session.query(database.Product).filter(database.Product.id == produto_id).delete()
+    session.commit()
+    return {"status": "ok"}
+
+@app.patch("/produtos/{produto_id}")
+def update_produto(produto_id: int, produto: Produto):
+    session = Session(database.engine)
+    session.query(database.Product).filter(database.Product.id == produto_id).update(produto)
+    session.commit()
+    return {"status": "ok"}
+
+
 
 
 @app.get("/start-pipeline")

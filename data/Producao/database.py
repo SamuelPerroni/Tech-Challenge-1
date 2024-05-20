@@ -13,12 +13,12 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
-class Produto(Base):
-    __tablename__ = "producao"
+class Product(Base):
+    __tablename__ = "production"
 
     id = Column(Integer, primary_key=True, index=True)
-    produto_type = Column(String)
-    produto = Column(String)
+    product_type = Column(String)
+    product = Column(String)
     year = Column(Integer)
     production = Column(Float)
 
