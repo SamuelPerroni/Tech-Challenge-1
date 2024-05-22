@@ -98,3 +98,7 @@ class Exportacao(Base):
             query = query.where(cls.valor == kwargs.get('valor'))
         result = await session.execute(query)
         return result.scalar()
+
+    __tablename__ = "exportacao"
+
+    id = Column(Integer, primary_key=True , autoincrement=True)
