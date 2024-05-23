@@ -5,7 +5,6 @@ from typing import Dict
 from data.Importacao import nodes
 
 
-
 def importacao_pipeline(import_datas: Dict[str, str]) -> DataFrame:
     df_comp = DataFrame() 
     for nome, path in import_datas.items():

@@ -16,9 +16,9 @@ def read_from_csv(path: str) -> DataFrame:
     return pd.read_csv(
         path,
         delimiter=';',
-        on_bad_lines='skip'
+        on_bad_lines='skip',
+        encoding = 'utf8'
         )
-
 
 def unpivot_years_columns(data: DataFrame) -> DataFrame:
     """
@@ -38,7 +38,6 @@ def unpivot_years_columns(data: DataFrame) -> DataFrame:
         var_name='year',
         value_name='values'
         )
-
 
 def sum_collumns_with_same_year(data: DataFrame) -> DataFrame:
     """
