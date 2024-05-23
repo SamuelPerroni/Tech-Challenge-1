@@ -14,10 +14,9 @@ app = FastAPI()
 
 app.include_router(comercio_router, prefix="/comercio")
 app.include_router(exportacao_router, prefix="/exportacao")
-"""app.include_router(importacao_router, prefix="/importacao")
+app.include_router(importacao_router, prefix="/importacao")
 app.include_router(processamento_router, prefix="/processamento")
-app.include_router(producao_router, prefix="/producao")"""
-
+app.include_router(producao_router, prefix="/producao")
 
 @app.get("/health", status_code=200)
 async def root():

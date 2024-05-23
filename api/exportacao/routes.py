@@ -81,7 +81,3 @@ async def create_or_update_exportacao(exportacao_create: ExportacaoIn):
     async with SessionLocal() as session:
         obj = await Exportacao.create_or_update(session, **exportacao_create.model_dump())
     return obj
-
-@exportacao_router.get("/")
-async def root():
-    return {"message": "Hello exportacao_router"}
