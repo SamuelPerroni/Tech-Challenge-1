@@ -99,6 +99,4 @@ class Exportacao(Base):
         result = await session.execute(query)
         return result.scalar()
 
-    __tablename__ = "exportacao"
-
-    id = Column(Integer, primary_key=True , autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)

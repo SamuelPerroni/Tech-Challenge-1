@@ -26,27 +26,3 @@ def exportacao_pipeline(import_datas: Dict[str, str]) -> DataFrame:
     df_comp = df_comp.sort_values(by='year').reset_index(drop=True)
 
     return df_comp
-
-
-# Função de teste detalhada
-"""def run_tests():
-    print("Running tests...")
-    import_datas = {
-        'Vinhos de mesa': 'ExpVinho.csv',
-        'Espumantes': 'ExpEspumantes.csv',
-        'Uvas frescas': 'ExpUva.csv',
-        'Suco de uva': 'ExpSuco.csv'
-    }
-    result_df = exportacao_pipeline(import_datas)
-    print("\nFinal result from exportacao_pipeline:")
-    print(result_df)
-    if not result_df.empty:
-        print("exportacao_pipeline passed!")
-    else:
-        print("exportacao_pipeline failed!")
-    print("All tests completed.")
-
-
-if __name__ == "__main__":
-    run_tests()
-"""
