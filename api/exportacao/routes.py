@@ -82,12 +82,3 @@ async def create_or_update_exportacao(exportacao_create: ExportacaoIn):
         obj = await Exportacao.create_or_update(session, **exportacao_create.model_dump())
     return obj
 
-from fastapi import APIRouter, HTTPException, status
-
-# rotas de exportacao
-exportacao_router = APIRouter()
-
-
-@exportacao_router.get("/")
-async def root():
-    return {"message": "Hello exportacao_router"}
