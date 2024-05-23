@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class ProcessamentoIn(BaseModel):
     product_type: str
     full_product_name: str
