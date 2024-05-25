@@ -33,12 +33,8 @@ class Exportacao(Base):
             query = query.where(
                 cls.description_type == kwargs.get('description_type')
             )
-        if kwargs.get('quantity') is not None:
-            query = query.where(cls.quantity == kwargs.get('quantity'))
-        if kwargs.get('valor') is not None:
-            query = query.where(cls.valor == kwargs.get('valor'))
         result = await session.execute(query)
-        return result.scalar()
+        return result.scalars().all()
 
     @classmethod
     async def get_by_id(cls, session, id):
@@ -92,11 +88,7 @@ class Exportacao(Base):
             query = query.where(
                 cls.description_type == kwargs.get('description_type')
             )
-        if kwargs.get('quantity') is not None:
-            query = query.where(cls.quantity == kwargs.get('quantity'))
-        if kwargs.get('valor') is not None:
-            query = query.where(cls.valor == kwargs.get('valor'))
         result = await session.execute(query)
         return result.scalar()
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+

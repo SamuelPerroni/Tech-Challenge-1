@@ -12,10 +12,6 @@ class ExportacaoIn(BaseModel):
 class ExportacaoOut(ExportacaoIn):
     id: int
 
-    class Config:
-        orm_mode = True
-
-
 class ExportacaoUpdate(BaseModel):
     year: int | None = None
     pais: str | None = None

@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from pandas import DataFrame
 
 
@@ -15,9 +16,9 @@ def read_from_csv(path: str) -> DataFrame:
     return pd.read_csv(
         path,
         delimiter=';',
-        on_bad_lines='skip'
+        on_bad_lines='skip',
+        encoding = 'utf8'
         )
-
 
 def unpivot_years_columns(data: DataFrame) -> DataFrame:
     """
@@ -38,8 +39,7 @@ def unpivot_years_columns(data: DataFrame) -> DataFrame:
         value_name='values'
         )
 
-
-def sum_collumns_same_year(data: DataFrame) -> DataFrame:
+def sum_collumns_with_same_year(data: DataFrame) -> DataFrame:
     """
     Sums the values of the dataframe columns that have the same year.
 
@@ -50,13 +50,12 @@ def sum_collumns_same_year(data: DataFrame) -> DataFrame:
         DataFrame: A pandas DataFrame with the year columns added together.
     """
     df = data
-    years = list(range(1970, 2023, 1))
+    df['quantity'] = np.where(df['year'].str.contains('.1'), df['values'], 1)
+    df['valor R$'] = np.where(~df['year'].str.contains('.1'), df['values'], 0)
+    df['year'] = df['year'].str.replace('.1', '')
+    df.groupby(['País',  'year']).agg({'quantity': 'sum', 'valor R$': 'sum'})
 
-    for year in years:
-        string_year = str(year)
-        df[string_year] = df[string_year] + df[f'{string_year}.1']
-        df = df.drop(f'{string_year}.1', axis=1)
-        
+
     return df
 
 def remove_rows_without_import_value(data: DataFrame) -> DataFrame:
@@ -70,5 +69,5 @@ def remove_rows_without_import_value(data: DataFrame) -> DataFrame:
         DataFrame: A pandas DataFrame without rows with no import value.
     """
     filter = data['values'] > 0
-  
+    
     return data[filter]

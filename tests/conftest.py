@@ -3,6 +3,8 @@ import pytest_asyncio
 from api import Base, engine
 from api.comercio.schemas import ComercioIn
 from api.processamento.schemas import ProcessamentoIn
+from api.security.schemas import UserIn
+from api.security.utils import get_hash_password, verify_password
 
 
 from faker import Faker
@@ -121,3 +123,34 @@ async def run_pipeline_processamento():
     from const import processamento_urls
     data = processamento_pipeline(processamento_urls)
     return data.head(5)
+
+
+###### Config JWT test
+################################
+################################
+################################
+################################
+################################
+################################
+
+class UserFactory:
+    @classmethod
+    def generate_user_name(cls):
+        return Faker().pystr(min_chars=3, max_chars=16)
+    
+    @classmethod
+    def generate_user_pass(cls):
+        return Faker().pystr(min_chars=3, max_chars=16)
+    
+    @classmethod
+    def build(cls):
+        return UserIn(
+            user_name=Faker().pystr(min_chars=3, max_chars=16),
+            user_pass=Faker().pystr(min_chars=3, max_chars=16),
+        )
+    
+@pytest_asyncio.fixture
+async def create_fake_data_user():
+    
+    return UserFactory().build
+
