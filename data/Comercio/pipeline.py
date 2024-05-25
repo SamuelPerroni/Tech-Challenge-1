@@ -8,5 +8,6 @@ def comercio_pipeline(path: str) -> DataFrame:
     df = nodes.split_type_and_product_and_drop_general_type(df)
     df = nodes.rewrite_type_names(df)
     df = nodes.drop_rows_totals(df)
-
+    df = nodes.select_columns(df)
+    
     return df
