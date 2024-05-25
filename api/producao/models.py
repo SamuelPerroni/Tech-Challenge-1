@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 from sqlalchemy import Column, Integer, String, Float
-from sqlalchemy.future import select
+
 
 from ..database import Base
 
+class Product(Base):
+    __tablename__ = "production"
 
-class Producao(Base):
-
-    __tablename__ = "producao"
-
-    id = Column(Integer, primary_key=True , autoincrement=True)
+    id = Column(Integer, primary_key=True, index=True)
+    product_type = Column(String)
+    product = Column(String)
+    year = Column(Integer)
+    production = Column(Float)
