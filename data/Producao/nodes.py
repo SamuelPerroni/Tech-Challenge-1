@@ -1,9 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from produtos import database
-from produtos.database import Produto
-
+import database
 
 def read_from_csv(path: str) -> pd.DataFrame:
     """

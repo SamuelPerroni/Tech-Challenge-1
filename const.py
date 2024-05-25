@@ -19,3 +19,6 @@ exportacao_urls = [
     'http://vitibrasil.cnpuv.embrapa.br/download/ExpUva.csv',
     'http://vitibrasil.cnpuv.embrapa.br/download/ExpSuco.csv'
 ]
+producao_urls = [
+    'http://vitibrasil.cnpuv.embrapa.br/download/Producao.csv'
+]
