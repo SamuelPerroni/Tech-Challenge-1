@@ -39,5 +39,5 @@ app.add_event_handler("startup", startup_database_event)
 
 
 if __name__ == '__main__':
-    uvicorn.run("main:app", reload=True)
+    uvicorn.run("main:app", reload=False, host="0.0.0.0", port=8000)
 

@@ -259,7 +259,6 @@ async def jwt_token_fixture(create_test_client,  create_fake_data_user):
     header = {'Authorization': f'Bearer {token}'}
     return header
 
-
 ###### Config producao test
 ################################
 ################################

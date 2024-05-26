@@ -13,7 +13,9 @@ def read_from_csv(path: str) -> pd.DataFrame:
     """
     return pd.read_csv(path,
                        delimiter=';',
-                       on_bad_lines='skip').rename(columns={
+                       on_bad_lines='skip',
+                       encoding='utf-8'
+                       ).rename(columns={
                            'control': 'produto',
                            'Produto': 'full_product_name'
                        }).drop(['id'],axis=1)
