@@ -3,9 +3,11 @@ import pytest_asyncio
 from api import Base, engine
 from api.comercio.schemas import ComercioIn
 from api.processamento.schemas import ProcessamentoIn
+from api.importacao.schemas import ImportIn
 from api.security.schemas import UserIn
 from api.exportacao.schemas import ExportacaoIn
 from api.security.utils import get_hash_password, verify_password
+
 
 
 from faker import Faker
@@ -123,6 +125,69 @@ async def run_pipeline_processamento():
     from data.Processamento.pipeline import processamento_pipeline
     from const import processamento_urls
     data = processamento_pipeline(processamento_urls)
+    return data.head(5)
+
+
+###### Config importacao test
+################################
+################################
+################################
+################################
+################################
+################################
+
+    pais: str
+    year: int
+    quantity: float
+    valor: float
+    type: str
+
+class ImportacaoFactory:
+    @classmethod
+    def pais(cls):
+        return Faker().pystr(min_chars=3, max_chars=16)
+
+
+    @classmethod
+    def year(cls):
+        return Faker().pyint(min_value=10, max_value= 10000)
+
+
+    @classmethod
+    def quantity(cls):
+        return Faker().pyfloat(left_digits=4, positive=True, right_digits=2)
+
+
+    @classmethod
+    def valor(cls):
+        return Faker().pyfloat(left_digits=4, positive=True, right_digits=2)
+
+
+    @classmethod
+    def type(cls):
+        return Faker().pystr(min_chars=3, max_chars=16)
+
+ 
+    @classmethod
+    def build(cls):
+        return ImportIn(
+            pais=Faker().pystr(min_chars=3, max_chars=16),
+            year=Faker().pyint(min_value=10, max_value= 10000),
+            quantity=Faker().pyfloat(left_digits=4, positive=True, right_digits=2),
+            valor=Faker().pyfloat(left_digits=4, positive=True, right_digits=2),
+            type=Faker().pystr(min_chars=3, max_chars=16)
+        )
+    
+@pytest_asyncio.fixture
+async def create_fake_data_importacao():
+    
+    return ImportacaoFactory().build
+
+@pytest_asyncio.fixture
+async def run_pipeline_importacao():
+    from data.Importacao.pipeline import importacao_pipeline
+    from const import importacao_urls
+    data = importacao_pipeline(importacao_urls)
     return data.head(5)
 
 
