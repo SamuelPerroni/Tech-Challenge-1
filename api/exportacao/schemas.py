@@ -1,11 +1,10 @@
 from pydantic import BaseModel
-from datetime import date
 
 
 class ExportacaoIn(BaseModel):
     year: int
     pais: str
-    description_type: str
+    type: str
     quantity: int
     valor: float
 
@@ -15,5 +14,6 @@ class ExportacaoOut(ExportacaoIn):
 class ExportacaoUpdate(BaseModel):
     year: int | None = None
     pais: str | None = None
-    description_type: str | None = None
-    value: float | None = None
+    type: str | None = None
+    valor: float | None = None
+    quantity: int | None = None

@@ -12,13 +12,13 @@ class Exportacao(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     pais = Column(String(32))
     year = Column(Integer)
-    description_type = Column(String(32))
+    type = Column(String(32))
     quantity = Column(String(32))
     valor = Column(Float)
 
     def __repr__(self):
         return (
-            f"{self.pais} - {self.year} - {self.description_type} - "
+            f"{self.pais} - {self.year} - {self.type} - "
             f"{self.quantity} - {self.valor}"
         )
 
@@ -29,9 +29,9 @@ class Exportacao(Base):
             query = query.where(cls.pais == kwargs.get('pais'))
         if kwargs.get('year') is not None:
             query = query.where(cls.year == kwargs.get('year'))
-        if kwargs.get('description_type') is not None:
+        if kwargs.get('type') is not None:
             query = query.where(
-                cls.description_type == kwargs.get('description_type')
+                cls.type == kwargs.get('type')
             )
         result = await session.execute(query)
         return result.scalars().all()
@@ -84,11 +84,9 @@ class Exportacao(Base):
             query = query.where(cls.pais == kwargs.get('pais'))
         if kwargs.get('year') is not None:
             query = query.where(cls.year == kwargs.get('year'))
-        if kwargs.get('description_type') is not None:
+        if kwargs.get('type') is not None:
             query = query.where(
-                cls.description_type == kwargs.get('description_type')
+                cls.type == kwargs.get('type')
             )
         result = await session.execute(query)
         return result.scalar()
-
-
