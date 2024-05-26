@@ -4,9 +4,9 @@ from api import Base, engine
 from api.comercio.schemas import ComercioIn
 from api.processamento.schemas import ProcessamentoIn
 from api.importacao.schemas import ImportIn
+from api.producao.schemas import ProducaoIn
 from api.security.schemas import UserIn
 from api.exportacao.schemas import ExportacaoIn
-from api.security.utils import get_hash_password, verify_password
 
 
 
@@ -136,11 +136,6 @@ async def run_pipeline_processamento():
 ################################
 ################################
 
-    pais: str
-    year: int
-    quantity: float
-    valor: float
-    type: str
 
 class ImportacaoFactory:
     @classmethod
@@ -263,3 +258,34 @@ async def jwt_token_fixture(create_test_client,  create_fake_data_user):
     token = response.json()['access_token']
     header = {'Authorization': f'Bearer {token}'}
     return header
+
+
+###### Config producao test
+################################
+################################
+################################
+################################
+################################
+################################
+
+class ProducaoFactory:    
+    @classmethod
+    def build(cls):
+        return ProducaoIn(
+            type=Faker().pystr(min_chars=3, max_chars=16),
+            full_product_name=Faker().pystr(min_chars=3, max_chars=16),
+            year=int(Faker().year()),
+            value=Faker().pyint(min_value=10, max_value= 1000000000)
+        )
+    
+@pytest_asyncio.fixture
+async def create_fake_data_producao():
+    
+    return ProducaoFactory().build
+
+
+@pytest_asyncio.fixture
+async def run_pipeline_producao():
+    from data.Producao.pipeline import producao_pipeline
+    from const import producao_url
+    return producao_pipeline(producao_url).head(5)

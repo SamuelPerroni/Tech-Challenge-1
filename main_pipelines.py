@@ -1,5 +1,7 @@
-from data import comercio_pipeline
+from data import producao_pipeline
 from data import processamento_pipeline
+from data import comercio_pipeline
+from const import producao_url
 from data import exportacao_pipeline
 from const import comercio_url
 from const import exportacao_urls
@@ -13,15 +15,9 @@ from sqlalchemy import create_engine
 from api.config import settings
 
 if __name__ == '__main__':
-  # data = processamento_pipeline(processamento_urls).head(2)
-  # print(data.to_dict('records'))
-  # print(data.info())
+  data = comercio_pipeline(comercio_url).head(2)
+  print(data.to_dict('records'))
+  print(data)
 
-  # print(comercio_pipeline(comercio_url).head(5))
-
-  from data.Importacao.pipeline import importacao_pipeline
-  from const import importacao_urls
-  data = importacao_pipeline(importacao_urls)
-  print(data.head(100))
 
 
