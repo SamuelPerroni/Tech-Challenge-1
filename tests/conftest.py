@@ -5,6 +5,9 @@ from api.comercio.schemas import ComercioIn
 from api.processamento.schemas import ProcessamentoIn
 from api.importacao.schemas import ImportIn
 from api.security.schemas import UserIn
+from api.exportacao.schemas import ExportacaoIn
+from api.security.utils import get_hash_password, verify_password
+
 
 
 from faker import Faker
@@ -217,3 +220,46 @@ async def create_fake_data_user():
     
     return UserFactory().build
 
+
+###### Config exportacao test
+################################
+################################
+################################
+################################
+################################
+################################
+
+class ExportacaoFactory:    
+    @classmethod
+    def build(cls):
+        return ExportacaoIn(
+            pais=Faker().pystr(min_chars=3, max_chars=16),
+            year=int(Faker().year()),
+            quantity=Faker().pyint(),
+            valor=Faker().pyfloat(left_digits=4, positive=True, right_digits=2),
+            type=Faker().pystr(min_chars=3, max_chars=16)
+        )
+    
+@pytest_asyncio.fixture
+async def create_fake_data_exportacao():
+    
+    return ExportacaoFactory().build
+
+
+@pytest_asyncio.fixture
+async def run_pipeline_exportacao():
+    from data.Exportacao.pipeline import exportacao_pipeline
+    from const import exportacao_urls
+    data = exportacao_pipeline(exportacao_urls)
+    return data.head(5)
+
+
+@pytest_asyncio.fixture
+async def jwt_token_fixture(create_test_client,  create_fake_data_user):
+    test_client = create_test_client
+    data_user = create_fake_data_user().model_dump()
+    response = test_client.post('/jwt/create', json=data_user)
+    response = test_client.post('/jwt/token', json=data_user)
+    token = response.json()['access_token']
+    header = {'Authorization': f'Bearer {token}'}
+    return header
