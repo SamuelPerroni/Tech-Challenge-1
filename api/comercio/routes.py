@@ -1,11 +1,12 @@
 from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, status, Path, Query
+from fastapi import APIRouter, HTTPException, status, Path, Query, Depends
 from sqlalchemy.future import select
 
 from .schemas import ComercioIn, ComercioOut, ComercioUpdate
 from .models import Comercio
 from ..database import SessionLocal
+from api.security.utils import auth_wrapper
 
 
 # Comercio Routes - COMPLETE CRUD.
@@ -15,7 +16,7 @@ comercio_router = APIRouter()
 
 # POST ENDPOINT.
 @comercio_router.post("/", response_model=ComercioOut, status_code=status.HTTP_201_CREATED)
-async def create_comercio(comercio_create: ComercioIn):
+async def create_comercio(comercio_create: ComercioIn, username=Depends(auth_wrapper)):
     async with SessionLocal() as session:
         comercio_obj = await Comercio.get(session, **comercio_create.model_dump())
         if comercio_obj is None:
@@ -49,7 +50,9 @@ async def read_comercio_by_id(id: Annotated[int, Path(title="The ID of the item 
 
 # UPDATE ENDPOINT
 @comercio_router.put("/{id}", response_model=ComercioOut, status_code=status.HTTP_200_OK)
-async def update_comercio_object(id: Annotated[int, Path(title="The ID of the item to get")], comercio_update: ComercioUpdate):
+async def update_comercio_object(id: Annotated[int, Path(title="The ID of the item to get")], 
+                                 comercio_update: ComercioUpdate,
+                                 username=Depends(auth_wrapper)):
     async with SessionLocal() as session:
         comercio_obj = await Comercio.get_by_id(session, id=id)
         if comercio_obj is None:
@@ -60,7 +63,8 @@ async def update_comercio_object(id: Annotated[int, Path(title="The ID of the it
 
 # DELETE ENDPOINT
 @comercio_router.delete('/{id}', status_code=status.HTTP_200_OK)
-async def delete_comercio_object(id: Annotated[int, Path(title="The ID of the item to get")]):
+async def delete_comercio_object(id: Annotated[int, Path(title="The ID of the item to get")],
+                                 username=Depends(auth_wrapper)):
     async with SessionLocal() as session:
         comercio_obj = await Comercio.get_by_id(session, id=id)
         if comercio_obj is None:
@@ -72,7 +76,8 @@ async def delete_comercio_object(id: Annotated[int, Path(title="The ID of the it
 
 # Get or Create implementation by outside function definitions.
 @comercio_router.post("/get-or-create/", response_model=ComercioOut, status_code=status.HTTP_201_CREATED)
-async def get_or_create_comercio(comercio_create: ComercioIn):
+async def get_or_create_comercio(comercio_create: ComercioIn,
+                                 username=Depends(auth_wrapper)):
     async with SessionLocal() as session:
         obj = await Comercio.get_or_create(session, **comercio_create.model_dump())
     return obj
@@ -80,7 +85,8 @@ async def get_or_create_comercio(comercio_create: ComercioIn):
 
 # Create or Update implementation by outise function definitions.
 @comercio_router.post("/create-or-update/", response_model=ComercioOut, status_code=status.HTTP_201_CREATED)
-async def create_or_update_comercio(comercio_create: ComercioIn):
+async def create_or_update_comercio(comercio_create: ComercioIn,
+                                    username=Depends(auth_wrapper)):
     async with SessionLocal() as session:
         obj = await Comercio.create_or_update(session, **comercio_create.model_dump())
     return obj
