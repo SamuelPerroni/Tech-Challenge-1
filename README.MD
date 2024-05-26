@@ -1,3 +1,14 @@
+# Como rodar
+1. Tenha o docker instalado na sua maquina.
+2. Cria um arquivo .env dentro de TECH-CHALLENGE-1 (mesmo nivel do dockefile e doccker-compose.yml) com as seguintes variaveis:
+- MYSQL_DATABASE
+- MYSQL_USER
+- MYSQL_PASSWORD
+- MYSQL_ROOT_PASSWORD
+3. Rode no terminal docker-compose up --build
+4. Acesse http://127.0.0.1:8000/docs#/
+5. Depois de finalizar, rode docker-compose down
+
 # Project
 
 - Este projeto disponibiliza dados tratados de Vitivinicultura adquiridos pela Embrapa (https://vitibrasil.cnpuv.embrapa.br/).
