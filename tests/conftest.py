@@ -6,6 +6,7 @@ from api.processamento.schemas import ProcessamentoIn
 from api.importacao.schemas import ImportIn
 from api.producao.schemas import ProducaoIn
 from api.security.schemas import UserIn
+from api.exportacao.schemas import ExportacaoIn
 
 
 
@@ -135,11 +136,6 @@ async def run_pipeline_processamento():
 ################################
 ################################
 
-    pais: str
-    year: int
-    quantity: float
-    valor: float
-    type: str
 
 class ImportacaoFactory:
     @classmethod
@@ -220,6 +216,50 @@ async def create_fake_data_user():
     return UserFactory().build
 
 
+###### Config exportacao test
+################################
+################################
+################################
+################################
+################################
+################################
+
+class ExportacaoFactory:    
+    @classmethod
+    def build(cls):
+        return ExportacaoIn(
+            pais=Faker().pystr(min_chars=3, max_chars=16),
+            year=int(Faker().year()),
+            quantity=Faker().pyint(),
+            valor=Faker().pyfloat(left_digits=4, positive=True, right_digits=2),
+            type=Faker().pystr(min_chars=3, max_chars=16)
+        )
+    
+@pytest_asyncio.fixture
+async def create_fake_data_exportacao():
+    
+    return ExportacaoFactory().build
+
+
+@pytest_asyncio.fixture
+async def run_pipeline_exportacao():
+    from data.Exportacao.pipeline import exportacao_pipeline
+    from const import exportacao_urls
+    data = exportacao_pipeline(exportacao_urls)
+    return data.head(5)
+
+
+@pytest_asyncio.fixture
+async def jwt_token_fixture(create_test_client,  create_fake_data_user):
+    test_client = create_test_client
+    data_user = create_fake_data_user().model_dump()
+    response = test_client.post('/jwt/create', json=data_user)
+    response = test_client.post('/jwt/token', json=data_user)
+    token = response.json()['access_token']
+    header = {'Authorization': f'Bearer {token}'}
+    return header
+
+
 ###### Config producao test
 ################################
 ################################
@@ -248,16 +288,4 @@ async def create_fake_data_producao():
 async def run_pipeline_producao():
     from data.Producao.pipeline import producao_pipeline
     from const import producao_url
-    data = producao_pipeline(producao_url)
-    return data.head(5)
-
-
-@pytest_asyncio.fixture
-async def jwt_token_fixture(create_test_client,  create_fake_data_user):
-    test_client = create_test_client
-    data_user = create_fake_data_user().model_dump()
-    response = test_client.post('/jwt/create', json=data_user)
-    response = test_client.post('/jwt/token', json=data_user)
-    token = response.json()['access_token']
-    header = {'Authorization': f'Bearer {token}'}
-    return header
+    return producao_pipeline(producao_url).head(5)

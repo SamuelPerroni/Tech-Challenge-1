@@ -50,24 +50,8 @@ def sum_collumns_with_same_year(data: DataFrame) -> DataFrame:
         DataFrame: A pandas DataFrame with the year columns added together.
     """
     df = data
-    df['quantity'] = np.where(df['year'].str.contains('.1'), df['values'], 1)
-    df['valor R$'] = np.where(~df['year'].str.contains('.1'), df['values'], 0)
+    df['quantity'] = np.where(~df['year'].str.contains('.1', regex=False), df['values'], 0.0)
+    df['valor R$'] = np.where(df['year'].str.contains('.1',  regex=False), df['values'], 0.0)
     df['year'] = df['year'].str.replace('.1', '')
-    df.groupby(['País',  'year']).agg({'quantity': 'sum', 'valor R$': 'sum'})
+    return df.groupby(['País',  'year'], as_index=False).agg({'quantity': 'sum', 'valor R$': 'sum'})
 
-
-    return df
-
-def remove_rows_without_import_value(data: DataFrame) -> DataFrame:
-    """
-    Remove rows from the dataframe that have no trade value.
-
-    Args:
-        data (DataFrame): DataFrame with trading columns.
-
-    Returns:
-        DataFrame: A pandas DataFrame without rows with no import value.
-    """
-    filter = data['values'] > 0
-    
-    return data[filter]

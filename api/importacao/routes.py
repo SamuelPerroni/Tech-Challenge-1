@@ -1,10 +1,11 @@
 from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, status, Path, Query
+from fastapi import APIRouter, HTTPException, status, Path, Query, Depends
 from sqlalchemy.future import select
 
 from .schemas import ImportIn, ImportOut, ImportUpdate
 from .models import Importacao
+from api.security.utils import auth_wrapper
 from ..database import SessionLocal
 
 
@@ -15,7 +16,8 @@ importacao_router = APIRouter()
 
 # POST ENDPOINT.
 @importacao_router.post("/", response_model=ImportOut, status_code=status.HTTP_201_CREATED)
-async def create_Import(import_create: ImportIn):
+async def create_Import(import_create: ImportIn,
+                        username=Depends(auth_wrapper)):
     async with SessionLocal() as session:
         import_obj = await Importacao.get(session, **import_create.model_dump())
         if import_obj is None:
@@ -29,16 +31,14 @@ async def create_Import(import_create: ImportIn):
 async def read_import(
     pais: Annotated[str | None, Query(description="Query for name of country")] = None,
     year: Annotated[int | None,  Query(description="Query data for specific year")] = None, 
-    values: Annotated[int | None,  Query(description="Query data for specific values")] = None,
-    quantity: Annotated[int | None,  Query(description="Query data for specific quantity")] = None,
-    valor: Annotated[str | None,  Query(description="Query data for specific valor")] = None,
+    quantity: Annotated[float | None,  Query(description="Query data for specific quantity")] = None,
+    valor: Annotated[float | None,  Query(description="Query data for specific valor")] = None,
     type: Annotated[str | None, Query(description="Query for scpecific type of product")] = None):
     async with SessionLocal() as session:
         import_objs = await Importacao.get_all(
             session, 
             pais=pais, 
-            year=year, 
-            values=values, 
+            year=year,  
             quantity=quantity, 
             valor=valor, 
             type=type)
@@ -59,7 +59,9 @@ async def read_import_by_id(id: Annotated[int, Path(title="The ID of the item to
 
 # UPDATE ENDPOINT
 @importacao_router.put("/{id}", response_model=ImportOut, status_code=status.HTTP_200_OK)
-async def update_import_object(id: Annotated[int, Path(title="The ID of the item to get")], Import_update: ImportUpdate):
+async def update_import_object(id: Annotated[int, Path(title="The ID of the item to get")],
+                               Import_update: ImportUpdate,
+                               username=Depends(auth_wrapper)):
     async with SessionLocal() as session:
         import_obj = await Importacao.get_by_id(session, id=id)
         if import_obj is None:
@@ -70,7 +72,8 @@ async def update_import_object(id: Annotated[int, Path(title="The ID of the item
 
 # DELETE ENDPOINT
 @importacao_router.delete('/{id}', status_code=status.HTTP_200_OK)
-async def delete_import_object(id: Annotated[int, Path(title="The ID of the item to get")]):
+async def delete_import_object(id: Annotated[int, Path(title="The ID of the item to get")],
+                               username=Depends(auth_wrapper)):
     async with SessionLocal() as session:
         import_obj = await Importacao.get_by_id(session, id=id)
         if import_obj is None:
@@ -82,7 +85,8 @@ async def delete_import_object(id: Annotated[int, Path(title="The ID of the item
 
 # Get or Create implementation by outside function definitions.
 @importacao_router.post("/get-or-create/", response_model=ImportOut, status_code=status.HTTP_201_CREATED)
-async def get_or_create_import(import_create: ImportIn):
+async def get_or_create_import(import_create: ImportIn,
+                               username=Depends(auth_wrapper)):
     async with SessionLocal() as session:
         obj = await Importacao.get_or_create(session, **import_create.model_dump())
     return obj
@@ -90,7 +94,8 @@ async def get_or_create_import(import_create: ImportIn):
 
 # Create or Update implementation by outise function definitions.
 @importacao_router.post("/create-or-update/", response_model=ImportOut, status_code=status.HTTP_201_CREATED)
-async def create_or_update_import(import_create: ImportIn):
+async def create_or_update_import(import_create: ImportIn,
+                                  username=Depends(auth_wrapper)):
     async with SessionLocal() as session:
         obj = await Importacao.create_or_update(session, **import_create.model_dump())
     return obj

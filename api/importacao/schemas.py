@@ -1,10 +1,11 @@
 from pydantic import BaseModel
 
 class ImportIn(BaseModel):
-    product: str
+    pais: str
     year: int
-    commerce: float
-    description_type: str
+    quantity: float
+    valor: float
+    type: str
 
 
 class ImportOut(ImportIn):
