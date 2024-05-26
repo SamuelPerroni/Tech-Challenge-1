@@ -1,4 +1,4 @@
-proucao_url = 'http://vitibrasil.cnpuv.embrapa.br/download/Producao.csv'
+producao_url = 'http://vitibrasil.cnpuv.embrapa.br/download/Producao.csv'
 processamento_urls = [
     'http://vitibrasil.cnpuv.embrapa.br/download/ProcessaViniferas.csv',
     'http://vitibrasil.cnpuv.embrapa.br/download/ProcessaAmericanas.csv',

@@ -13,13 +13,12 @@ class Importacao(Base):
     id = Column(Integer, primary_key=True , autoincrement=True)
     pais = Column(String(40))
     year = Column(Integer)
-    values = Column(Integer)
     quantity = Column(Integer)
     valor = Column(Integer)
     type = Column(String(20))
 
     def __repr__(self):
-        return f"{self.pais} - {self.year} - {self.values} - {self.quantity} - {self.valor} - {self.type}"
+        return f"{self.pais} - {self.year} - {self.quantity} - {self.valor} - {self.type}"
 
     @classmethod
     async def get(cls, session, **kwargs):
@@ -28,14 +27,8 @@ class Importacao(Base):
             query = query.where(cls.pais == kwargs.get('pais'))
         if kwargs.get('year') is not None:
             query = query.where(cls.year == kwargs.get('year'))
-        if kwargs.get('values') is not None:
-            query = query.where(cls.values == kwargs.get('values'))
-        if kwargs.get('quantity') is not None:
-            query = query.where(cls.quantity == kwargs.get('quantity'))
-        if kwargs.get('valor') is not None:
-            query = query.where(cls.valor == kwargs.get('valor'))
-        if kwargs.get('tipe') is not None:
-            query = query.where(cls.tipe == kwargs.get('tipe'))
+        if kwargs.get('type') is not None:
+            query = query.where(cls.type == kwargs.get('type'))
         result = await session.execute(query)
         return result.scalar()
     
@@ -46,14 +39,12 @@ class Importacao(Base):
             query = query.where(cls.pais == kwargs.get('pais'))
         if kwargs.get('year') is not None:
             query = query.where(cls.year == kwargs.get('year'))
-        if kwargs.get('values') is not None:
-            query = query.where(cls.values == kwargs.get('values'))
         if kwargs.get('quantity') is not None:
             query = query.where(cls.quantity == kwargs.get('quantity'))
         if kwargs.get('valor') is not None:
             query = query.where(cls.valor == kwargs.get('valor'))
-        if kwargs.get('tipe') is not None:
-            query = query.where(cls.tipe == kwargs.get('tipe'))
+        if kwargs.get('type') is not None:
+            query = query.where(cls.type == kwargs.get('type'))
         result = await session.execute(query)
         return result.scalars().all()
     

@@ -3,7 +3,6 @@ from pydantic import BaseModel
 class ImportIn(BaseModel):
     pais: str
     year: int
-    values: float
     quantity: float
     valor: float
     type: str
