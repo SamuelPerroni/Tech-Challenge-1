@@ -29,9 +29,9 @@ async def create_Import(import_create: ImportIn):
 async def read_import(
     pais: Annotated[str | None, Query(description="Query for name of country")] = None,
     year: Annotated[int | None,  Query(description="Query data for specific year")] = None, 
-    values: Annotated[int | None,  Query(description="Query data for specific values")] = None,
-    quantity: Annotated[int | None,  Query(description="Query data for specific quantity")] = None,
-    valor: Annotated[str | None,  Query(description="Query data for specific valor")] = None,
+    values: Annotated[float | None,  Query(description="Query data for specific values")] = None,
+    quantity: Annotated[float | None,  Query(description="Query data for specific quantity")] = None,
+    valor: Annotated[float | None,  Query(description="Query data for specific valor")] = None,
     type: Annotated[str | None, Query(description="Query for scpecific type of product")] = None):
     async with SessionLocal() as session:
         import_objs = await Importacao.get_all(
