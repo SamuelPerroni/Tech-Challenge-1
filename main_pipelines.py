@@ -13,9 +13,14 @@ from api.config import settings
 if __name__ == '__main__':
 
 
-    data = processamento_pipeline(processamento_urls).head(2)
-    print(data.to_dict('records'))
-    print(data.info())
+    # data = processamento_pipeline(processamento_urls).head(2)
+    # print(data.to_dict('records'))
+    # print(data.info())
 
-    print(comercio_pipeline(comercio_url).head(5))
+    # print(comercio_pipeline(comercio_url).head(5))
+
+    from data.Importacao.pipeline import importacao_pipeline
+    from const import importacao_urls
+    data = importacao_pipeline(importacao_urls)
+    print(data.head(100))
 
