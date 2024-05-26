@@ -1,76 +1,122 @@
-import requests
-from fastapi import APIRouter, HTTPException, status
-
-from api import SessionLocal, database
-from api.producao.models import Product
-from data import producao_pipeline
+from typing import Annotated
+from fastapi import APIRouter, HTTPException, status, Path, Query, Depends
+from .schemas import ProducaoIn, ProducaoOut, ProducaoUpdate
+from .models import Producao
+from ..database import SessionLocal
+from api.security.utils import auth_wrapper
 
 # rotas de exportacao
-app = APIRouter()
-
-@app.get("/")
-async def root():
-    return {"message": "Hello producao_router"}
-
-@app.get("/")
-def read_root():
-    return {"Hello": "ML1"}
-
-@app.post("/products")
-def create_product(product: Product):
-    session = SessionLocal()
-    session.add(product)
-    session.commit()
-    return product
-
-@app.get("/products/{product_id}")
-def read_product(Product_id: int):
-    session = SessionLocal()
-    record = session.query(Product).filter(database.Product.id == Product_id).first()
-    return record
-
-@app.get("/production")
-def read_all():
-    session = SessionLocal()
-    records = session.query(Product).all()
-    return records
-
-@app.get("/Products/type/{Product_type}")
-def read_producao_by_master(Product_type):
-    session = SessionLocal()
-    records = session.query(database.Product).filter(database.Product.Product_type == Product_type).all()
-    return records
-
-@app.get("/Products/master2/{Product_type}")
-def read_products_by_master2(Product_type):
-    session = SessionLocal()
-    records = session.query(database.Product).filter(database.Product.Product_type == Product_type).all()
-    for record in records:
-        print(record)
-    return records
-
-@app.detete("/Products/{Product_id}")
-def delete_product(Product_id: int):
-    session = SessionLocal()
-    session.query(database.Product).filter(database.Product.id == Product_id).delete()
-    session.commit()
-    return {"status": "ok"}
-
-@app.patch("/Products/{Product_id}")
-def update_product(Product_id: int, Product: Product):
-    session = SessionLocal()
-    session.query(database.Product).filter(database.Product.id == Product_id).update(Product)
-    session.commit()
-    return {"status": "ok"}
-
-@app.get("/start-pipeline")
-def start_pipeline():
-    download_file('http://vitibrasil.cnpuv.embrapa.br/download/Producao.csv', 'Producao.csv')
-    producao_pipeline('Producao.csv')
-    return {"status": "ok"}
+producao_router = APIRouter()
 
 
-def download_file(url, filename):
-    response = requests.get(url)
-    with open(filename, 'wb') as file:
-        file.write(response.content)
+# POST ENDPOINT.
+@producao_router.post("/",
+                           response_model=ProducaoOut,
+                           status_code=status.HTTP_201_CREATED)
+async def create_Producao(Producao_create: ProducaoIn,
+                               username=Depends(auth_wrapper)):
+
+    async with SessionLocal() as session:
+        Producao_obj = await Producao.get(session,**Producao_create.model_dump())
+        if Producao_obj is None:
+            Producao_to_create = Producao(**Producao_create.model_dump())
+            return await Producao.create(session, Producao_to_create)
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                            detail="Object already exists")
+
+
+# GET ENDPOINT. ONE OBJECT BY ID
+@producao_router.get("/{id}",
+                          response_model=ProducaoOut,
+                          status_code=status.HTTP_200_OK)
+async def read_Producao_by_id(id: Annotated[int,
+                                                 Path(title="The ID of the item to get")]):
+
+    async with SessionLocal() as session:
+        Producao_objs = await Producao.get_by_id(session, id)
+        if Producao_objs is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                detail="Object not found")
+    return Producao_objs
+
+
+# GET ENDPOINT. LIST OF OBJECTS BY QUERY PARAMETERS
+@producao_router.get("/",
+                          response_model=list[ProducaoOut],
+                          status_code=status.HTTP_200_OK)
+async def read_Producao(
+    type: Annotated[str | None,
+                            Query(description="Query data for specific type of product")] = None,
+    full_product_name: Annotated[str | None,
+                                 Query(description="Query for scpecific product")] = None,
+    year: Annotated[int | None,
+                    Query(description="Query data for specific year")] = None):
+
+    async with SessionLocal() as session:
+        Producao_objs = await Producao.get_all(session,
+                                                         type=type,
+                                                         full_product_name=full_product_name,
+                                                         year=year)
+    return Producao_objs
+
+
+# UPDATE ENDPOINT
+@producao_router.put("/{id}",
+                          response_model=ProducaoOut,
+                          status_code=status.HTTP_200_OK)
+async def update_comercio_object(id: Annotated[int, Path(title="The ID of the item to get")],
+                                 Producao_update: ProducaoUpdate,
+                                 username=Depends(auth_wrapper)):
+
+    async with SessionLocal() as session:
+        Producao_obj = await Producao.get_by_id(session,
+                                                          id=id)
+        if Producao_obj is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                detail="Object not found")
+        await Producao.update(session, Producao_obj,
+                                   **Producao_update.model_dump())
+    return Producao_obj
+
+
+# DELETE ENDPOINT
+@producao_router.delete('/{id}',
+                             status_code=status.HTTP_200_OK)
+async def delete_Producao_object(id: Annotated[int, Path(title="The ID of the item to get")],
+                                      username=Depends(auth_wrapper)):
+
+    async with SessionLocal() as session:
+        Producao_obj = await Producao.get_by_id(session, id=id)
+        if Producao_obj is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                detail="Object not found")
+        await Producao.delete(session,
+                                   Producao_obj)
+    return {"message": "deleted"}
+
+# # # # COMPLEX ENDPOINTS # # # #
+
+
+# Get or Create implementation by outside function definitions.
+@producao_router.post("/get-or-create/",
+                           response_model=ProducaoOut,
+                           status_code=status.HTTP_201_CREATED)
+async def get_or_create_Producao(Producao_create: ProducaoIn,
+                                      username=Depends(auth_wrapper)):
+
+    async with SessionLocal() as session:
+        obj = await Producao.get_or_create(session, **Producao_create.model_dump())
+    return obj
+
+
+# Create or Update implementation by outise function definitions.
+@producao_router.post("/create-or-update/",
+                           response_model=ProducaoOut,
+                           status_code=status.HTTP_201_CREATED)
+async def create_or_update_Producao(Producao_create: ProducaoIn,
+                                         username=Depends(auth_wrapper)):
+
+    async with SessionLocal() as session:
+        obj = await Producao.create_or_update(session,
+                                                   **Producao_create.model_dump())
+    return obj

@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 
-import database
 
 def read_from_csv(path: str) -> pd.DataFrame:
     """
@@ -13,13 +12,12 @@ def read_from_csv(path: str) -> pd.DataFrame:
     Returnes:
         pd.DataFrame: A pandas dataframe of producao commerce values.
     """
-    df = pd.read_csv(path, delimiter=';')
-    name_list = ['id', 'produto'] + list(range(1970, 2023, 1))
     return pd.read_csv(path,
                        delimiter=';',
-                       header=1,
-                       names=name_list,
-                       on_bad_lines='skip')
+                       on_bad_lines='skip').rename(columns={
+                           'control': 'produto',
+                           'produto': 'full_product_name'
+                       }).drop(['id'],axis=1)
 
 
 def product_type(value: str) -> str:
@@ -32,15 +30,22 @@ def product_type(value: str) -> str:
     Returnes:
         str: string of type name
     """
-    if value.isupper():
-        return value
+    prefix = value[0:2]
+    if prefix == 'vm':
+        return 'VINHO DE MESA'
+    elif prefix == 'vv':
+        return 'VINHO FINO DE MESA(VINIFERA)'
+    elif prefix == 'su':
+        return 'SUCO'
+    elif prefix == 'de':
+        return 'DERIVADOS'
     else:
-        return ''
+        return 'agregacao'
 
 
 def new_col_type(data: pd.DataFrame) -> pd.DataFrame:
     """
-    Function to create a new column called 'type'
+    Function to create a new column called 'type', drop "produto" and fix types
 
     Args:
         data (DataFrame): Dataframe that we want append a new column
@@ -49,35 +54,16 @@ def new_col_type(data: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: Dataframe after appending new column
     """
     new_column = data['produto'].apply(product_type)
-    data.insert(loc=0, column='product_type', value=new_column)
-    return data
+    data.insert(loc=0, column='type', value=new_column)
+    df_retorno = data[data['type'] != 'agregacao']
+    df_retorno = df_retorno.drop(columns={'produto'})
+    df_retorno['type'] = df_retorno['type'].astype(str)
+    df_retorno['full_product_name'] = df_retorno['full_product_name'].astype(str)
+    df_retorno['year'] =  df_retorno['year'].astype(int)
+ 
+    
+    return df_retorno
 
-def drop_id(data: pd.DataFrame) -> pd.DataFrame:
-    """
-    Function to drop aggregation lines
-
-    Args:
-        data (DataFrame): Dataframe that we want drop totals
-
-    Returnes:
-        pd.DataFrame: Dataframe after drop
-    """
-    data = data.drop(columns=['id'])
-    return data
-
-
-def drop_totals(data: pd.DataFrame) -> pd.DataFrame:
-    """
-    Function to drop aggregation lines
-
-    Args:
-        data (DataFrame): Dataframe that we want drop totals
-
-    Returnes:
-        pd.DataFrame: Dataframe after drop
-    """
-    data = data[data['product_type'] != '']
-    return data
 
 
 def unpivot_years_columns(data: pd.DataFrame) -> pd.DataFrame:
@@ -91,68 +77,7 @@ def unpivot_years_columns(data: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: Pandas DataFrame with melted year columns.
     """
-    return data.melt(id_vars=['product_type', 'product'],
-                   var_name='year',
-                   value_name='value')
-
-
-def remove_not_numbers(data: pd.DataFrame) -> pd.DataFrame:
-    """
-    Function to change not number values to NaN
-
-    Args:
-        data (DataFrame): Dataframe that we want change not numbers values
-
-    Returnes:
-        pd.DataFrame: Dataframe after the changes
-    """
-
-    return data.map(lambda x: np.nan if (x == '*' or x == 'nd') else x)
-
-def save_to_db(df: pd.DataFrame):
-    connection = connect_to_db()
-    session = database.SessionLocal
-    produto_type = ''
-    index: int = 0
-    for index, row in df.iterrows():
-        if row['produto'].isupper():
-            produto_type = row['produto']
-        else:
-            index += 1
-            new_produto = Produto(id=index, produto_type=produto_type, produto=row['produto'], year=row['year'], production=row['value'])
-            session.add(new_produto)
-            session.commit()
-
-    # Print the transformed dataframe
-    print(df)
-    # Read the CSV file
-    session.close()
-
-def connect_to_db():
-    try:
-        connection = psycopg2.connect(
-            user="postgres",
-            password="changeme",
-            host="localhost",
-            port="5432",
-            database="dbml1"
-        )
-
-        cursor = connection.cursor()
-        # Print PostgreSQL Connection properties
-        print(connection.get_dsn_parameters(), "\n")
-
-        # Print PostgreSQL version
-        cursor.execute("SELECT version();")
-        record = cursor.fetchone()
-        print("You are connected to - ", record, "\n")
-
-    except (Exception, psycopg2.Error) as error:
-        print("Error while connecting to PostgreSQL", error)
-    finally:
-        #closing database connection.
-        if (connection):
-            cursor.close()
-            # connection.close()
-            # print("PostgreSQL connection is closed")
-    return connection
+    return data.melt(id_vars=['produto','full_product_name'],
+                     value_vars= None,
+                     var_name='year',
+                     value_name='value')

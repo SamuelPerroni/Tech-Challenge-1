@@ -1,6 +1,6 @@
-from data import comercio_pipeline
+from data import producao_pipeline
 from data import processamento_pipeline
-from const import comercio_url
+from const import producao_url
 from const import processamento_urls
 
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
@@ -13,9 +13,5 @@ from api.config import settings
 if __name__ == '__main__':
 
 
-    data = processamento_pipeline(processamento_urls).head(2)
-    print(data.to_dict('records'))
+    data = producao_pipeline(producao_url).head(2)
     print(data.info())
-
-    print(comercio_pipeline(comercio_url).head(5))
-
