@@ -20,7 +20,6 @@ app.include_router(processamento_router, prefix="/processamento")
 app.include_router(producao_router, prefix="/producao")
 app.include_router(security_router, prefix="/jwt")
 
-
 @app.get("/health", status_code=200)
 async def root():
     return HTTPStatus.OK

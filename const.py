@@ -13,10 +13,10 @@ importacao_urls = {
     'passas' : 'http://vitibrasil.cnpuv.embrapa.br/download/ImpPassas.csv',
     'suco' : 'http://vitibrasil.cnpuv.embrapa.br/download/ImpSuco.csv'   
 }
-exportacao_urls = [
-    'http://vitibrasil.cnpuv.embrapa.br/download/ExpVinho.csv',
-    'http://vitibrasil.cnpuv.embrapa.br/download/ExpEspumantes.csv',
-    'http://vitibrasil.cnpuv.embrapa.br/download/ExpUva.csv',
-    'http://vitibrasil.cnpuv.embrapa.br/download/ExpSuco.csv'
-]
+exportacao_urls = {
+    'vinho': 'http://vitibrasil.cnpuv.embrapa.br/download/ExpVinho.csv',
+    'espumantes': 'http://vitibrasil.cnpuv.embrapa.br/download/ExpEspumantes.csv',
+    'uva': 'http://vitibrasil.cnpuv.embrapa.br/download/ExpUva.csv',
+    'suco': 'http://vitibrasil.cnpuv.embrapa.br/download/ExpSuco.csv'
+}
 
