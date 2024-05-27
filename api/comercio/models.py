@@ -11,9 +11,9 @@ class Comercio(Base):
     __tablename__ = "comercio"
 
     id = Column(Integer, primary_key=True , autoincrement=True)
-    product = Column(String(32))
+    product = Column(String(60))
     year = Column(Integer)
-    description_type = Column(String(32))
+    description_type = Column(String(60))
     commerce = Column(Float)
 
     def __repr__(self):

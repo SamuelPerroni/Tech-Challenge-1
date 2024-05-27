@@ -13,29 +13,16 @@ from api.database import Base
 
 app = FastAPI()
 
-app.include_router(comercio_router, prefix="/comercio")
-app.include_router(exportacao_router, prefix="/exportacao")
-app.include_router(importacao_router, prefix="/importacao")
-app.include_router(processamento_router, prefix="/processamento")
-app.include_router(producao_router, prefix="/producao")
-app.include_router(security_router, prefix="/jwt")
+app.include_router(security_router, prefix="/security", tags=['security'])
+app.include_router(comercio_router, prefix="/comercio", tags=["comercio"])
+app.include_router(exportacao_router, prefix="/exportacao", tags=['exportacao'])
+app.include_router(importacao_router, prefix="/importacao", tags=['importacao'])
+app.include_router(processamento_router, prefix="/processamento", tags=['processamento'])
+app.include_router(producao_router, prefix="/producao", tags=['producao'])
 
 @app.get("/health", status_code=200)
 async def root():
     return HTTPStatus.OK
-
-#function to create the database when we create the API
-# this fuction won't go to production env
-async def startup_database_event():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-# async def teardown_database_event():
-#     async with engine.begin() as conn:
-#         await conn.run_sync(Base.metadata.drop_all)
-
-app.add_event_handler("startup", startup_database_event)
-# app.add_event_handler("shutdown", teardown_database_event)
 
 
 if __name__ == '__main__':

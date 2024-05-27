@@ -10,10 +10,10 @@ class Exportacao(Base):
     __tablename__ = "exportacao"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    pais = Column(String(32))
+    pais = Column(String(60))
     year = Column(Integer)
-    type = Column(String(32))
-    quantity = Column(String(32))
+    type = Column(String(60))
+    quantity = Column(String(60))
     valor = Column(Float)
 
     def __repr__(self):
@@ -30,9 +30,7 @@ class Exportacao(Base):
         if kwargs.get('year') is not None:
             query = query.where(cls.year == kwargs.get('year'))
         if kwargs.get('type') is not None:
-            query = query.where(
-                cls.type == kwargs.get('type')
-            )
+            query = query.where(cls.type == kwargs.get('type'))
         result = await session.execute(query)
         return result.scalars().all()
 
