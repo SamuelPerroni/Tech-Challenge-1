@@ -1,27 +1,32 @@
 # Como rodar
-1. Tenha o docker instalado na sua maquina.
-2. Cria um arquivo .env dentro de TECH-CHALLENGE-1 (mesmo nivel do dockefile e doccker-compose.yml) com as seguintes variaveis:
-- MYSQL_DATABASE
-- MYSQL_USER
-- MYSQL_PASSWORD
-- MYSQL_ROOT_PASSWORD
-3. Rode no terminal docker-compose up --build
-4. Acesse http://127.0.0.1:8000/docs#/
-5. Depois de finalizar, rode docker-compose down
+
+1. Tenha o Docker instalado na sua máquina.
+2. Crie um arquivo `.env` dentro de `TECH-CHALLENGE-1` (no mesmo nível do `Dockerfile` e `docker-compose.yml`) com as seguintes variáveis:
+    - `MYSQL_DATABASE`
+    - `MYSQL_USER`
+    - `MYSQL_PASSWORD`
+    - `MYSQL_ROOT_PASSWORD`
+3. Rode no terminal o comando: `docker-compose up --build`
+4. Acesse `http://127.0.0.1:8000/docs#/`
+5. Crie um usuário em `/security/create` (Create User)
+6. Faça login com seu usuário em `/security/token` (Login for Access Token)
+7. Caso esteja em `/docs` (openapi), insira o token no canto superior direito (Authorize)
+8. O token tem duração de 30 minutos. Você pode testar os endpoints de POST, DELETE e PUT durante esse tempo.
+9. Os endpoints de GET estão abertos, sem necessidade de Token JWT.
+10. Depois de finalizar, rode `docker-compose down`
 
 # Project
 
 - Este projeto disponibiliza dados tratados de Vitivinicultura adquiridos pela Embrapa (https://vitibrasil.cnpuv.embrapa.br/).
-- Há dois packages gerais:
-    - /api
-    - /data
+- Há dois pacotes gerais:
+    - `/api`
+    - `/data`
 
-
-# Packages 
+# Packages
 
 ## data
-- O Package data é responsável pela busca de dados no site da embrapa, fazendo o download dos arquivos CSV e tratamento de dados.
-- O package é separado em subpackages, cada um relacionado a cada fonte de dados.
+- O pacote `data` é responsável pela busca de dados no site da Embrapa, fazendo o download dos arquivos CSV e tratamento de dados.
+- O pacote é separado em subpacotes, cada um relacionado a uma fonte de dados específica.
 
 1. Comercio
 2. Exportacao
@@ -29,21 +34,21 @@
 4. Processamento
 5. Producao
 
-- Cada subpackage é responsável pela implementação dos seus nós (nodes.py) e seu pipeline (pipeline.py)
+- Cada subpacote é responsável pela implementação dos seus nós (`nodes.py`) e seu pipeline (`pipeline.py`).
 
 ## api
-- O package da API tem uma implementação semelhante ao data.
-- É formado pelos subpackages
+- O pacote `api` tem uma implementação semelhante ao `data`.
+- É formado pelos seguintes subpacotes:
 
 1. Comercio
 2. Exportacao
 3. Importacao
 4. Processamento
 5. Producao
-6. security 
+6. security
 
-- Cada package é responsável pela criação do seu ORM (models.py), tipagem de de endpoints (schemas.py) e endpoint (routes.py) seguindo a mesma forma de implementação.
-- O package security nos da a implementação de usuarios e autenticação via token JWT para ser usada nos demais packages.
+- Cada pacote é responsável pela criação do seu ORM (`models.py`), tipagem de endpoints (`schemas.py`) e endpoint (`routes.py`), seguindo a mesma forma de implementação.
+- O pacote `security` nos dá a implementação de usuários e autenticação via token JWT para ser usada nos demais pacotes.
 
 
 # Funcionamento dos End Points

@@ -9,11 +9,12 @@ COPY const.py /app/
 COPY api/ /app/api/
 COPY data/ /app/data/
 COPY main.py /app/
-COPY main_pipelines.py /app/
+COPY setup.py /app/
 COPY requirements.txt /app/
 
 # Install the Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Set the entrypoint to run the application
-ENTRYPOINT ["sh", "-c", "sleep 20 && uvicorn main:app --host 0.0.0.0 --port 8000"]
+ENTRYPOINT ["sh", "-c", "sleep 20 && python setup.py && sleep 5 && uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4"]
+

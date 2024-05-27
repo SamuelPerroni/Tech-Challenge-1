@@ -13,7 +13,7 @@ from api.security.utils import auth_wrapper
 exportacao_router = APIRouter()
 
 
-@exportacao_router.post("/", response_model=ExportacaoOut, status_code=status.HTTP_201_CREATED)
+@exportacao_router.post("/", response_model=ExportacaoOut, status_code=status.HTTP_201_CREATED, tags=["exportacao"])
 async def create_exportacao(create_exportacao: ExportacaoIn, username=Depends(auth_wrapper)):
     async with SessionLocal() as session:
         exportacao_obj = await Exportacao.get(session, **create_exportacao.model_dump())
@@ -24,7 +24,7 @@ async def create_exportacao(create_exportacao: ExportacaoIn, username=Depends(au
 
 
 # GET ENDPOINT. LIST OF OBJECTS BY QUERY PARAMETERS
-@exportacao_router.get("/", response_model=list[ExportacaoOut], status_code=status.HTTP_200_OK)
+@exportacao_router.get("/", response_model=list[ExportacaoOut], status_code=status.HTTP_200_OK, tags=["exportacao"])
 async def read_exportacao(
     year: Annotated[int | None, Query(description="Query data for specific year")] = None,
     pais: Annotated[str | None, Query(description="Query data for specific product")] = None,
@@ -35,7 +35,7 @@ async def read_exportacao(
 
 
 # GET ENDPOINT. ONE OBJECT BY ID
-@exportacao_router.get("/{id}", response_model=ExportacaoOut, status_code=status.HTTP_200_OK)
+@exportacao_router.get("/{id}", response_model=ExportacaoOut, status_code=status.HTTP_200_OK, tags=["exportacao"])
 async def read_exportacao_by_id(id: Annotated[int, Path(title="The ID of the item to get")]):
     async with SessionLocal() as session:
         query = select(Exportacao).where(Exportacao.id == id)
@@ -47,7 +47,7 @@ async def read_exportacao_by_id(id: Annotated[int, Path(title="The ID of the ite
 
 
 # UPDATE ENDPOINT
-@exportacao_router.put("/{id}", response_model=ExportacaoOut, status_code=status.HTTP_200_OK)
+@exportacao_router.put("/{id}", response_model=ExportacaoOut, status_code=status.HTTP_200_OK, tags=["exportacao"])
 async def update_exportacao_object(id: Annotated[int, Path(title="The ID of the item to get")], 
                                    exportacao_update: ExportacaoUpdate, 
                                    username=Depends(auth_wrapper)):
@@ -60,7 +60,7 @@ async def update_exportacao_object(id: Annotated[int, Path(title="The ID of the 
 
 
 # DELETE ENDPOINT
-@exportacao_router.delete('/{id}', status_code=status.HTTP_200_OK)
+@exportacao_router.delete('/{id}', status_code=status.HTTP_200_OK, tags=["exportacao"])
 async def delete_exportacao_object(id: Annotated[int, Path(title="The ID of the item to get")],
                                    username=Depends(auth_wrapper)):
     async with SessionLocal() as session:
@@ -73,7 +73,7 @@ async def delete_exportacao_object(id: Annotated[int, Path(title="The ID of the 
 # # # # COMPLEX ENDPOINTS # # # #
 
 # Get or Create implementation by outside function definitions.
-@exportacao_router.post("/get-or-create/", response_model=ExportacaoOut, status_code=status.HTTP_201_CREATED)
+@exportacao_router.post("/get-or-create/", response_model=ExportacaoOut, status_code=status.HTTP_201_CREATED, tags=["exportacao"])
 async def get_or_create_exportacao(exportacao_create: ExportacaoIn,
                                    username=Depends(auth_wrapper)):
     async with SessionLocal() as session:
@@ -82,7 +82,7 @@ async def get_or_create_exportacao(exportacao_create: ExportacaoIn,
 
 
 # Create or Update implementation by outise function definitions.
-@exportacao_router.post("/create-or-update/", response_model=ExportacaoOut, status_code=status.HTTP_201_CREATED)
+@exportacao_router.post("/create-or-update/", response_model=ExportacaoOut, status_code=status.HTTP_201_CREATED, tags=["exportacao"])
 async def create_or_update_exportacao(exportacao_create: ExportacaoIn,
                                       username=Depends(auth_wrapper)):
     async with SessionLocal() as session:

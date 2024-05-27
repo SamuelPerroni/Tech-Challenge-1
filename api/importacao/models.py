@@ -11,11 +11,11 @@ class Importacao(Base):
     __tablename__ = "importacao"
 
     id = Column(Integer, primary_key=True , autoincrement=True)
-    pais = Column(String(40))
+    pais = Column(String(60))
     year = Column(Integer)
     quantity = Column(Integer)
     valor = Column(Integer)
-    type = Column(String(20))
+    type = Column(String(60))
 
     def __repr__(self):
         return f"{self.pais} - {self.year} - {self.quantity} - {self.valor} - {self.type}"

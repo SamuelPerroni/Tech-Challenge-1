@@ -11,8 +11,8 @@ class Producao(Base):
     __tablename__ = "producao"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    type = Column(String(32))
-    full_product_name = Column(String(32))
+    type = Column(String(60))
+    full_product_name = Column(String(60))
     year = Column(Integer)
     value = Column(Float)
 

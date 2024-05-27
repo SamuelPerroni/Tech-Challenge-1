@@ -11,9 +11,9 @@ class Processamento(Base):
     __tablename__ = "processamento"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    product_type = Column(String(32))
-    full_product_name = Column(String(32))
-    classification = Column(String(32))
+    product_type = Column(String(60))
+    full_product_name = Column(String(60))
+    classification = Column(String(60))
     year = Column(Integer)
     commerce = Column(Float)
 

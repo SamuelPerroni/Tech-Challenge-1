@@ -83,3 +83,7 @@ def select_columns(data):
         columns={'full_product_name': 'product',
                  'description type': 'description_type'}
     )
+
+def clean(data):
+    data['product'] = data['product'].str.strip()
+    return data
