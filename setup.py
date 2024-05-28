@@ -30,22 +30,11 @@ from const import (
     producao_url
 )
 
-import logging
-
-# logging configuration
-logging.root = logging.getLogger('api')
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(name)s - %(asctime)s - %(filename)s - %(funcName)s - %(levelname)s - %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S',
-)
-
 
 
 async def create_tables(engine):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    # await asyncio.sleep(0.250)
 
 
 def run_pipe(pipeline, url_path):
@@ -58,12 +47,10 @@ async def insert_data(session, data, table):
         insert_stmt = table.__table__.insert().values(data)
         # Execute the insert statement
         await session.execute(insert_stmt)
-    # await asyncio.sleep(0.250)
 
 
 
 async def main():
-    # 
     engine = create_async_engine(
         settings.DATABASE_URL, 
         pool_pre_ping=True,
@@ -80,7 +67,6 @@ async def main():
     # create tables on db
     await create_tables(engine)
 
-    logging.info('getting data')
 
     comercio = comercio_pipeline(comercio_url).to_dict(orient='records')
     processamento = processamento_pipeline(processamento_urls).to_dict(orient='records')
@@ -88,18 +74,13 @@ async def main():
     importacao = importacao_pipeline(importacao_urls).to_dict(orient='records')
     producao = producao_pipeline(producao_url).to_dict(orient='records')
 
-    logging.info('data finish')
 
     async with SessionLocal() as session:
-        logging.info('inside session local')
         await insert_data(session, comercio, Comercio)
         await insert_data(session, processamento, Processamento)
         await insert_data(session, exportacao, Exportacao)
         await insert_data(session, importacao, Importacao)
         await insert_data(session, producao, Producao)
-    # await asyncio.sleep(0.250)
-
-    logging.info('finish process')
 
     await engine.dispose()
     

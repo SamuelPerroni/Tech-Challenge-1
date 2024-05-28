@@ -7,13 +7,36 @@
     - `MYSQL_PASSWORD`
     - `MYSQL_ROOT_PASSWORD`
 3. Rode no terminal o comando: `docker-compose up --build`
+    - o Docker irá criar um banco de dados MySql (caso dê erro na primeira vez, rode novamente) e em seguida irá subir o API.
+![](files/Criando-Docker.gif)
 4. Acesse `http://127.0.0.1:8000/docs#/`
 5. Crie um usuário em `/security/create` (Create User)
 6. Faça login com seu usuário em `/security/token` (Login for Access Token)
+![](files/criando_token.gif)
 7. Caso esteja em `/docs` (openapi), insira o token no canto superior direito (Authorize)
+![](files/testando_token.gif)
 8. O token tem duração de 30 minutos. Você pode testar os endpoints de POST, DELETE e PUT durante esse tempo.
 9. Os endpoints de GET estão abertos, sem necessidade de Token JWT.
 10. Depois de finalizar, rode `docker-compose down`
+
+# Deploy
+```mermaid
+graph TD
+    B[Repositório Git] -->|CI/CD| C[Imagem Docker]
+    C --> |Registra a imagem| D[Amazon ECR]
+    D -->|Deploy| E[Amazon ECS]
+    E -->|Conexão| G[Amazon RDS]
+
+    subgraph AWS
+        D
+        E
+        G
+    end
+```
+- Usamos o git para armazenar o código fonte da aplicação
+- Utilizamos CI/CD para construir a imagem da aplicação
+- Armazenamos a imagem construida no ECR (Elastic Container Registry)
+- Realizamos o Deploy no ECS (Elastic Container Service) com conexão de um banco RDS (especificação via váriavel de ambiente), isto é, sem lançar o banco de dados junto da aplicação. 
 
 # Project
 
